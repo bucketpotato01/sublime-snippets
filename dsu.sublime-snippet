@@ -1,0 +1,39 @@
+<snippet>
+	<content><![CDATA[
+namespace dsu {
+
+vector<int> par, sz;
+
+void init(int n) {
+	par.resize(n + 1);
+	sz.resize(n + 1, 1);
+	iota(par.begin(), par.end(), 0);
+}
+
+int p(int c) {
+	if (c == par[c]) return c;
+	par[c] = p(par[c]);
+	return par[c];
+}
+
+bool merge(int a, int b) {
+	a = p(a); b = p(b);
+	if (a == b) return 0;
+	if (sz[a] >= sz[b]) {
+		sz[a] += sz[b];
+		par[b] = a;
+	}
+	else {
+		sz[b] += sz[a];
+		par[a] = b;
+	}
+	return 1;
+}
+
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>dsu</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

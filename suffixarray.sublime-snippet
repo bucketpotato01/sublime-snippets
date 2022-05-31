@@ -1,0 +1,131 @@
+<snippet>
+	<content><![CDATA[
+struct SuffixArray
+{
+
+	int n, LOG;
+	vector<char> s;
+	vector<int> sor;
+	vector<int> fv;
+	vector<int> lcparr;
+	vector<vector<int>> sparse;
+	vector<int> lo;
+
+	SuffixArray(char * S) {
+
+		n = 0;
+		while (S[n]) n++;
+		s.resize(n + 1);
+		for (int i = 0; i <= n; i++)
+			s[i] = S[i];
+
+		build();
+
+	}
+
+	void build() {
+		buildSA();
+		buildLCP();
+	}
+
+	void buildSA() {
+
+		sor.resize(n + 1);
+		fv.resize(n + 1);
+		iota(sor.begin(), sor.end(), 0);
+		sort(sor.begin(), sor.end(), [&](int a, int b) {
+			return (s[a] < s[b]);
+		});
+
+		int co = 0;
+		for (int i = 0; i <= n; i++) {
+			if (i && s[sor[i]] == s[sor[i - 1]]) co--;
+			fv[sor[i]] = co++;
+		}
+
+		int cv = 1;
+		while (cv < n) {
+
+			vector<int> nv (n + 1);
+			vector<int> cnt(n + 1, 0);
+			vector<int> nfv (n + 1);
+
+			for (int i = 0; i <= n; i++) if (fv[i] < n) cnt[fv[i] + 1]++;
+			for (int i = 1; i <= n; i++) cnt[i] += cnt[i - 1];
+
+			for (int i = 0; i <= n; i++) {
+				int pi = (sor[i] + (n + 1) - cv) % (n + 1);
+				nv[cnt[fv[pi]]++] = pi;
+			}
+			
+			int nco = 0;
+			for (int i = 0; i <= n; i++) {
+				if (i && fv[nv[i - 1]] == fv[nv[i]] &&
+					fv[(nv[i - 1] + cv) % (n + 1)] == fv[(nv[i] + cv) % (n + 1)])
+					nco--;
+				nfv[nv[i]] = nco++;
+			}
+
+			swap(nv, sor);
+			swap(nfv, fv);
+
+			cv *= 2;	
+
+		}
+
+	}
+
+	void buildLCP() {
+
+		lcparr.resize(n + 1, 0);
+		for (int i = 0; i < n; i++) {
+			int ci = fv[i];
+			int cv = 0;
+			if (i) cv = max(cv, lcparr[fv[i - 1]] - 1);
+			int pi = sor[fv[i] - 1];
+			while (pi + cv < n && i + cv < n) {
+				if (s[pi + cv] != s[i + cv]) break;
+				cv++;
+			}
+			lcparr[ci] = cv;
+		}
+
+		LOG = 1; while ((1 << LOG) <= n) LOG++; LOG++;
+		sparse.resize(LOG, vector<int>(n + 1, 0));
+		for (int i = 0; i <= n; i++) sparse[0][i] = lcparr[i];
+		for (int i = 1; i < LOG; i++) {
+			for (int j = 0; j <= n; j++) {
+				sparse[i][j] = sparse[i - 1][j];
+				if (j + (1 << (i - 1)) <= n)
+					sparse[i][j] = min(sparse[i][j], sparse[i - 1][j + (1 << (i - 1))]);
+			}
+		}
+
+		lo.resize(n + 1, 0);
+		int cv = -1, nv = 1;
+		for (int i = 1; i <= n; i++) {
+			if (i == nv) {
+				cv++;
+				nv *= 2;
+			}
+			lo[i] = cv;
+		}
+	}
+
+	int lcp(int a, int b) {
+		if (a == b) return (n - a);
+		a = fv[a]; b = fv[b];
+		if (a > b) swap(a, b);
+		a++;
+		int l = b - a + 1;
+
+		return min(sparse[lo[l]][a], sparse[lo[l]][b - (1 << lo[l]) + 1]);
+	}
+	
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>suffixarray</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

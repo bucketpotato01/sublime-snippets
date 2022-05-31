@@ -1,0 +1,73 @@
+<snippet>
+	<content><![CDATA[
+template <typename T>
+struct ST
+{
+
+	int n;
+	int bstart, stsize;
+	vector<T> st, up;
+
+	/*
+	
+		To fill in
+
+	*/
+	const T zero;
+	const T noup;
+
+	T op(T a, T b) {
+
+	}
+
+	void pushdown(int c, ll cmin, ll cmax) {
+
+	}
+
+	ST(int _n) {
+		n = _n;
+		bstart = 1;
+		while (bstart < n) bstart *= 2;
+		stsize = bstart * 2 - 1;
+		bstart--;
+
+		st.resize(stsize, zero);
+		up.resize(stsize, noup);
+	}
+	
+	void update(int c, int cmin, int cmax, int minb, int maxb, T v) {
+		pushdown(c, cmin, cmax);
+		if (cmin >= minb && cmax <= maxb) {
+			up[c] = v;
+			pushdown(c, cmin, cmax);
+			return;
+		}
+		if (cmin > maxb || cmax < minb) return;
+		update(c * 2 + 1, cmin, (cmin + cmax) / 2, minb, maxb, v);
+		update(c * 2 + 2, 1 + (cmin + cmax) / 2, cmax, minb, maxb, v);
+		st[c] = op(st[c * 2 + 1], st[c * 2 + 2]);
+	}
+
+	void update(int lo, int hi, T v) {
+		update(0, 0, bstart, lo, hi, v);
+	}
+
+	T query(int c, int cmin, int cmax, int minb, int maxb) {
+		pushdown(c, cmin, cmax);
+		if (cmin >= minb && cmax <= maxb) return st[c];
+		if (cmin > maxb || cmax < minb) return zero;
+		return op(query(c * 2 + 1, cmin, (cmin + cmax) / 2, minb, maxb),
+			      query(c * 2 + 2, 1 + (cmin + cmax) / 2, cmax, minb, maxb));
+	}
+
+	T query(int lo, int hi) {
+		return query(0, 0, bstart, lo, hi);
+	}
+
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>lazyst</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

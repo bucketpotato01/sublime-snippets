@@ -1,0 +1,139 @@
+<snippet>
+	<content><![CDATA[
+struct GaussElim
+{
+	
+	int n;
+	vector<vector<ll>> a;
+	ll M;
+	vector<ll> inv;
+
+	ll binexp(ll x, ll y) {
+
+		if (!y) return 1;
+		if (y & 1) return (x * binexp(x, y - 1)) % M;
+		return binexp((x * x) % M, y / 2);
+
+	}
+
+	GaussElim(int _N, ll MD, int pc = 0) {
+
+		n = _N;
+		M = MD;
+
+		if (pc) {
+			inv.resize(M, 0);
+			for (int i = 1; i < M; i++)
+				inv[i] = binexp(i, M - 2);
+		}
+
+	}
+
+	void add(vector<ll> v, int eq) {
+
+		v.push_back(eq);
+		a.push_back(v);
+
+	}
+
+	vector<ll> solve() {
+
+		vector<int> fr;
+
+		int ci = 0;
+		for (int i = 0; i < n; i++) {
+
+			int f = -1;
+			for (int j = ci; j < a.size(); j++) {
+
+				if (a[j][i]) {
+					f = j;
+					break;
+				}
+
+			}
+
+			if (f == -1) {
+				fr.push_back(i);
+				continue;
+			}
+
+			swap(a[f], a[ci]);
+
+			ll tt = (inv.size() ? inv[a[ci][i]] : binexp(a[ci][i], M - 2));
+			for (ll &j : a[ci]) { j *= tt; j %= M; }
+
+			for (int j = ci + 1; j < a.size(); j++) {
+
+				if (!a[j][i]) continue;
+				ll rt = M - a[j][i];
+
+				for (int k = i; k <= n; k++) {
+
+					a[j][k] += (a[ci][k] * rt);
+					a[j][k] %= M;
+
+				}
+
+			}
+
+			ci++;
+
+		}
+
+		vector<ll> ans(n, -1);
+
+		for (int i : fr) {
+
+			ans[i] = 0;
+			for (int j = 0; j < a.size(); j++) {
+
+				a[j][i] = 0;
+
+			}
+
+		}
+
+		for (int i = ci; i < a.size(); i++) {
+
+			if (a[i][n]) return {-1};
+
+		}
+
+		for (int i = ci - 1; i >= 0; i--) {
+
+			int tt = -1;
+			for (int j = 0; j < n; j++) {
+				if (a[i][j]) {
+					tt = j;
+					break;
+				}
+			}
+
+			ans[tt] = a[i][n];
+
+			for (int j = 0; j < i; j++) {
+
+				ll tm = M - a[j][tt];
+				a[j][tt] = 0;
+				a[j][n] += (tm * a[i][n]);
+				a[j][n] %= M;
+
+			}
+
+		}
+
+		for (int i : ans)
+			assert(i != -1);
+
+		return ans;
+
+	}
+
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>gauss</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

@@ -1,0 +1,99 @@
+<snippet>
+	<content><![CDATA[
+namespace NTT {
+
+	// for mod 998244353
+
+	vector<ll> aux;
+
+	ll binexp(ll a, ll b) {
+		if (b == 0) return 1ll;
+		if (b == 1) return a % MOD;
+		if (b % 2) return (a * binexp(a, b - 1)) % MOD;
+		return binexp((a*a)%MOD, b/2);
+	}
+
+	vector<ll> dft(vector<ll> a, bool rev) {
+
+		int N = a.size();
+
+		aux.resize(N);
+
+		for (int n = N; n > 1; n /= 2) {
+
+			int c = 0;
+			for (int i = 0; i < N; i += n) {
+				for (int j = 0; j < n; j += 2)
+					aux[c++] = a[i + j];
+				for (int j = 1; j < n; j += 2)
+					aux[c++] = a[i + j];
+			}
+
+			swap(aux, a);
+
+		}
+
+		for (int n = 2; n <= N; n *= 2) {
+
+			ll mul = binexp(3, (MOD - 1) / n);
+			if (rev) mul = binexp(mul, MOD - 2);
+
+			for (int i = 0; i < N; i += n) {
+
+				ll cp = 1;
+				for (int j = 0; j < n; j++) {
+
+					int ps = n / 2;
+
+					ll cv = a[i + (j % ps)]; // even
+					cv += (cp * a[i + ps + (j % ps)]) % MOD; // odd
+					cv %= MOD;
+					aux[i + j] = cv;
+
+					cp *= mul;
+					cp %= MOD;
+
+				}
+
+			}
+
+			swap(a, aux);
+		}
+
+		if (rev) {
+			ll ninv = binexp(N, MOD - 2);
+			for (ll &i : a)
+				i *= ninv, i %= MOD;
+		}
+
+		return a;
+
+	}
+
+	vector<ll> convolution(vector<ll> a, vector<ll> b) {
+
+		int cs = max(a.size(), b.size()) * 2;
+		int n = 1; while (n < cs) n *= 2;
+
+		while (a.size() < n) a.push_back(0);
+		while (b.size() < n) b.push_back(0);
+
+		a = dft(a, 0); b = dft(b, 0);
+
+		vector<ll> res;
+		for (int i = 0; i < a.size(); i++)
+			res.push_back((a[i] * b[i]) % MOD);
+
+		res = dft(res, 1);
+		while (res.back() == 0) res.pop_back();
+		return res;
+
+	}
+
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>ntt</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

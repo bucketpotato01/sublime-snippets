@@ -1,0 +1,69 @@
+<snippet>
+	<content><![CDATA[
+struct LiChao
+{
+	
+	int n, bstart, stsize;
+	vector<pair<ll,ll>> st;
+
+	LiChao(int _n) {
+
+		n = _n;
+		bstart = 1;
+		while (bstart < n) bstart *= 2;
+		stsize = bstart * 2 - 1;
+		bstart--;
+
+		st.resize(stsize, {0, 1e18});
+
+	}
+
+	ll ev(pair<ll,ll> f, ll x) {
+		return x * f.first + f.second;
+	}
+
+	void update(int c, int cmin, int cmax, pair<ll,ll> cons) {
+
+		int mid = 1 + ((cmin + cmax) / 2);
+
+		ll v1 = ev(st[c], c);
+		ll v2 = ev(st[c], mid);
+
+		ll u1 = ev(cons, c);
+		ll u2 = ev(cons, mid);
+
+		int b1 = (u1 < v1);
+		int b2 = (u2 < v2);
+
+		if (b2) swap(cons, st[c]);
+
+		if (cmin == cmax) return;
+		if (b1 != b2) update(c * 2 + 1, cmin, mid - 1, cons);
+		else update(c * 2 + 2, mid, cmax, cons);
+
+	}
+
+	void add(ll m, ll b) {
+		update(0, 0, bstart, {m, b});
+	}
+
+	ll query(int c, int cmin, int cmax, ll v) {
+		if (cmin == cmax)
+			return ev(st[c], v);
+		int mid = (cmin + cmax) / 2;
+		if (v <= mid)
+			return min(ev(st[c], v), query(c * 2 + 1, cmin, mid, v));
+		return min(ev(st[c], v), query(c * 2 + 2, mid + 1, cmax, v));
+	}
+
+	ll query(ll x) {
+		return query(0, 0, bstart, x);
+	}
+
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>lichao</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>
