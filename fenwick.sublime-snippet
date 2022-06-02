@@ -12,12 +12,12 @@ struct Fenwick
  
 	Fenwick(int _n) {
 		n = _n + 2;
-		bit.resize(n, 0);
+		bit.resize(_n + 1, 0);
 	}
  
 	void update(int c, ll v) {
 		c++;
-		while (c <= n) {
+		while (c < n) {
 			bit[c] = op(bit[c], v);
 			c += (c & (-c));
 		}
