@@ -1,36 +1,40 @@
 <snippet>
 	<content><![CDATA[
-namespace dsu {
+struct dsu {
 
-vector<int> par, sz;
+	vector<int> par, sz;
 
-void init(int n) {
-	par.resize(n + 1);
-	sz.resize(n + 1, 1);
-	iota(par.begin(), par.end(), 0);
-}
-
-int p(int c) {
-	if (c == par[c]) return c;
-	par[c] = p(par[c]);
-	return par[c];
-}
-
-bool merge(int a, int b) {
-	a = p(a); b = p(b);
-	if (a == b) return 0;
-	if (sz[a] >= sz[b]) {
-		sz[a] += sz[b];
-		par[b] = a;
+	void init(int n) {
+		par = vector<int>(n + 1);
+		sz = vector<int>(n + 1, 1);
+		iota(par.begin(), par.end(), 0);
 	}
-	else {
-		sz[b] += sz[a];
-		par[a] = b;
-	}
-	return 1;
-}
 
-}
+	dsu(int n) {
+		init(n);
+	}
+
+	int p(int c) {
+		if (c == par[c]) return c;
+		return par[c] = p(par[c]);
+	}
+
+	int merge(int a, int b) {
+		if (a == b) return 0;
+		a = p(a); b = p(b);
+		if (a == b) return 0;
+		if (sz[a] >= sz[b]) {
+			sz[a] += sz[b];
+			par[b] = a;
+		}
+		else {
+			sz[b] += sz[a];
+			par[a] = b;
+		}
+		return 1;
+	}
+
+};
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>dsu</tabTrigger>
