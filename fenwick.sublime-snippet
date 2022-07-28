@@ -1,42 +1,42 @@
 <snippet>
-	<content><![CDATA[
+  <content><![CDATA[
 struct Fenwick
 {
  
-	ll n;
-	vector<ll> bit;
+  ll n;
+  vector<ll> bit;
  
-	ll op(ll a, ll b) {
-		return a + b;
-	}
+  ll op(ll a, ll b) {
+    return (a + b);
+  }
  
-	Fenwick(int _n) {
-		n = _n + 2;
-		bit.resize(_n + 1, 0);
-	}
+  Fenwick(int _n) {
+    n = _n + 1;
+    bit.resize(_n + 2, 0);
+  }
  
-	void update(int c, ll v) {
-		c++;
-		while (c < n) {
-			bit[c] = op(bit[c], v);
-			c += (c & (-c));
-		}
-	}
+  void update(int c, ll v) {
+    c++;
+    while (c < n) {
+      bit[c] = op(bit[c], v);
+      c += (c & (-c));
+    }
+  }
  
-	ll query(int c) {
-		ll res = 0;
-		c++;
-		while (c) {
-			res = op(bit[c], res);
-			c -= (c & (-c));
-		}
-		return res;
-	}
-	
+  ll query(int c) {
+    ll res = 0;
+    c++;
+    while (c) {
+      res = op(bit[c], res);
+      c -= (c & (-c));
+    }
+    return res;
+  }
+  
 };
 ]]></content>
-	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
-	<tabTrigger>fenwick</tabTrigger>
-	<!-- Optional: Set a scope to limit where the snippet will trigger -->
-	<!-- <scope>source.python</scope> -->
+  <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+  <tabTrigger>fenwick</tabTrigger>
+  <!-- Optional: Set a scope to limit where the snippet will trigger -->
+  <!-- <scope>source.python</scope> -->
 </snippet>
