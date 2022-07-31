@@ -1,41 +1,41 @@
 <snippet>
-	<content><![CDATA[
+  <content><![CDATA[
 namespace Combo {
  
+  vector<ll> fact = {1};
+  vector<ll> inv = {1};
  
-	vector<ll> fact;
-	vector<ll> inv;
+  ll binexp(ll a, ll b) {
+    if (b == 0) return 1ll;
+    if (b == 1) return a % MOD;
+    if (b % 2) return (a * binexp(a, b - 1)) % MOD;
+    return binexp((a*a)%MOD, b/2);
+  }
+
+  ll f(ll a) {
+    while (fact.size() <= a)
+      fact.push_back(((ll)fact.size() * fact.back()) % MOD);
+    return fact[a];
+  }
+
+  ll i(ll b) {
+    while (inv.size() <= b)
+      inv.push_back((inv.back() * binexp(inv.size(), MOD - 2)) % MOD);
+    return inv[b];
+  }
  
-	ll binexp(ll a, ll b) {
-		if (b == 0) return 1ll;
-		if (b == 1) return a % MOD;
-		if (b % 2) return (a * binexp(a, b - 1)) % MOD;
-		return binexp((a*a)%MOD, b/2);
-	}
- 
-	ll choose(ll a, ll b) {
-		if (a < b) return 0;
-		ll res = (fact[a] * inv[b]) % MOD;
-		res *= inv[a - b]; res %= MOD;
-		return res;
-	}
- 
-	void build(ll n) {
-		fact = vector<ll>(n);
-		inv = vector<ll>(n);
- 
-		fact[0] = 1; inv[0] = 1;
-		for (int i = 1; i < n; i++) {
-			fact[i] = (fact[i - 1] * (ll)i) % MOD;
-			inv[i] = binexp(fact[i], MOD - 2);
-		}
- 
-	}
-	
+  ll choose(ll a, ll b) {
+    if (a < b) return 0;
+
+    ll res = (f(a) * i(b)) % MOD;
+    res *= i(a - b); res %= MOD;
+    return res;
+  }
+  
 };
 ]]></content>
-	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
-	<tabTrigger>combinatorics</tabTrigger>
-	<!-- Optional: Set a scope to limit where the snippet will trigger -->
-	<!-- <scope>source.python</scope> -->
+  <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+  <tabTrigger>combinatorics</tabTrigger>
+  <!-- Optional: Set a scope to limit where the snippet will trigger -->
+  <!-- <scope>source.python</scope> -->
 </snippet>
