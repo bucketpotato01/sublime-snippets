@@ -1,0 +1,67 @@
+<snippet>
+  <content><![CDATA[
+struct bipartite_dsu {
+
+  vector<int> par, sz, chg;
+
+  void init(int n) {
+    par = vector<int>(n + 1);
+    sz = vector<int>(n + 1, 1);
+    chg = vector<int>(n + 1, 0);
+    iota(par.begin(), par.end(), 0);
+  }
+
+  bipartite_dsu(int n) {
+    init(n);
+  }
+
+  bipartite_dsu() {
+    init(0);
+  }
+
+  pair<int,int> p(int c) {
+    if (c == par[c]) return {c, 0};
+    pair<int,int> curr = p(par[c]);
+    par[c] = curr.first;
+    chg[c] ^= curr.second;
+    return {par[c], chg[c]};
+  }
+
+  int bad(int a, int b, int x) {
+
+    pair<int,int> A = p(a), B = p(b);
+    if (A.first != B.first) return 0;
+    return ((A.second ^ B.second ^ x) != 0);
+
+  }
+
+  int merge(int a, int b, int x) {
+    if (a == b) return 0;
+    pair<int,int> A = p(a), B = p(b);
+    if (A.first == B.first) return 0;
+
+    a = A.first;
+    b = B.first;
+
+    if (sz[a] >= sz[b]) {
+      sz[a] += sz[b];
+      par[b] = a;
+      chg[b] = (x ^ B.second ^ A.second);
+    }
+
+    else {
+      sz[b] += sz[a];
+      par[a] = b;
+      chg[a] = (x ^ B.second ^ A.second);
+    }
+
+    return 1;
+  }
+
+};
+]]></content>
+  <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+  <tabTrigger>bipartitedsu</tabTrigger>
+  <!-- Optional: Set a scope to limit where the snippet will trigger -->
+  <!-- <scope>source.python</scope> -->
+</snippet>
