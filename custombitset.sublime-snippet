@@ -1,0 +1,86 @@
+<snippet>
+  <content><![CDATA[
+struct CustomBitset {
+
+  const static int SIZE = 60;
+  
+  vector<ll> a;
+
+  CustomBitset(int n) {
+    a = vector<ll>((n + SIZE - 1) / SIZE, 0);
+  }
+
+  CustomBitset(vector<ll> _a) {
+    a = _a;
+  }
+
+  void set(int x) {
+
+    int ind = (x / SIZE);
+    int u = (x % SIZE);
+    a[ind] = a[ind] | (1ll << u);
+
+  }
+  
+  CustomBitset operator|(const CustomBitset& ov) {
+
+    CustomBitset nv(a);
+    for (int i = 0; i < nv.a.size(); i++) {
+      if (i >= ov.a.size()) break;
+      nv.a[i] = nv.a[i] | ov.a[i];
+    }
+    return nv;
+
+  }
+
+  CustomBitset operator&(const CustomBitset& ov) {
+
+    CustomBitset nv(a);
+    for (int i = 0; i < nv.a.size(); i++) {
+      if (i >= ov.a.size()) break;
+      nv.a[i] = nv.a[i] & ov.a[i];
+    }
+    return nv;
+
+  }
+
+  CustomBitset operator~() {
+
+    CustomBitset nv(a);
+    for (ll &i : nv.a) {
+      i ^= ((1ll << SIZE) - 1);
+    }
+    return nv;
+
+  }
+
+  CustomBitset operator<<(int s) {
+
+    vector<ll> b(a.size(), 0);
+    int oc = (s / SIZE);
+    s %= SIZE;
+
+    for (int i = oc; i < b.size(); i++)
+      b[i] = a[i - oc];
+    
+    ll pp = 0;
+    for (int i = 0; i < b.size(); i++) {
+
+      ll np = (b[i] >> (SIZE - s));
+      b[i] ^= (np << (SIZE - s));
+      b[i] = (b[i] << s);
+      b[i] ^= pp;
+      swap(pp, np);
+
+    }
+
+    return CustomBitset(b);
+  }
+
+};
+]]></content>
+  <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+  <tabTrigger>custombitset</tabTrigger>
+  <!-- Optional: Set a scope to limit where the snippet will trigger -->
+  <!-- <scope>source.python</scope> -->
+</snippet>
