@@ -1,6 +1,3 @@
-<snippet>
-  <content><![CDATA[
-// tested on https://judge.yosupo.jp/problem/scc
 struct SCC
 {
   
@@ -48,6 +45,7 @@ struct SCC
     if (vis[c] == lo[c]) {
       while (s.size()) {
         int x = s.top();
+        which[x] = cnt;
         s.pop();
         scc[cnt].push_back(x);
         onstack[x] = 0;
@@ -78,9 +76,3 @@ struct SCC
   }
 
 };
-]]></content>
-  <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
-  <tabTrigger>scc</tabTrigger>
-  <!-- Optional: Set a scope to limit where the snippet will trigger -->
-  <!-- <scope>source.python</scope> -->
-</snippet>
