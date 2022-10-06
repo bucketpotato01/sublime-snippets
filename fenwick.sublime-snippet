@@ -1,7 +1,6 @@
 <snippet>
   <content><![CDATA[
-struct Fenwick
-{
+struct Fenwick {
  
   ll n;
   vector<ll> bit;
@@ -26,7 +25,7 @@ struct Fenwick
   ll query(int c) {
     ll res = 0;
     c++;
-    while (c) {
+    while (c > 0) {
       res = op(bit[c], res);
       c -= (c & (-c));
     }
