@@ -1,0 +1,64 @@
+<snippet>
+  <content><![CDATA[
+template <typename T>
+struct Segtree
+{
+
+  int n;
+  int bstart, stsize;
+  vector<T> st;
+
+  /*
+  
+    To fill in
+
+  */
+  const T zero;
+
+  T op(T a, T b) {
+    
+  }
+
+  Segtree(int _n) {
+    n = _n;
+    bstart = 1;
+    while (bstart < n) bstart *= 2;
+    stsize = bstart * 2 - 1;
+    bstart--;
+
+    st = vector<T>(stsize, zero);
+  }
+
+  void update(int ind, T v) {
+
+    ind += bstart;
+    st[ind] = v;
+
+    while (1) {
+      if (!ind) break;
+      ind = (ind - 1) / 2;
+      st[ind] = op(st[ind * 2 + 1], st[ind * 2 + 2]);
+    }
+
+  }
+
+  T query(int c, int cmin, int cmax, int minb, int maxb) {
+    if (cmin >= minb && cmax <= maxb) return st[c];
+    if (cmin > maxb || cmax < minb) return zero;
+    return op(query(c * 2 + 1, cmin, (cmin + cmax) / 2, minb, maxb),
+            query(c * 2 + 2, 1 + (cmin + cmax) / 2, cmax, minb, maxb));
+  }
+
+  T query(int lo, int hi) {
+    if (lo > hi) return zero;
+    if (lo == hi) return st[lo + bstart];
+    return query(0, 0, bstart, lo, hi);
+  }
+
+};
+]]></content>
+  <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+  <tabTrigger>segtree</tabTrigger>
+  <!-- Optional: Set a scope to limit where the snippet will trigger -->
+  <!-- <scope>source.python</scope> -->
+</snippet>
