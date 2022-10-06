@@ -1,0 +1,60 @@
+<snippet>
+  <content><![CDATA[
+struct SAT
+{
+  
+  int n;
+  SCC sol;
+  vector<int> ans;
+
+  SAT(int _n): n(_n), sol(SCC(_n * 2)) {}
+
+  int c(int x) {
+    if (x < 0) return n - x;
+    return x;
+  }
+
+  int g(int x) {
+    if (x > n) x -= n;
+    return x;
+  }
+
+  void add(int x, int y) {
+
+    sol.add(c(-x), c(y));
+    sol.add(c(-y), c(x));
+
+  }
+
+  int solve() {
+
+    sol.find();
+
+    for (int i = 1; i <= n; i++) {
+      if (sol.which[i] == sol.which[i + n]) {
+        return 0;
+      }
+    }
+
+    ans = vector<int>(n + 1, -1);
+
+    for (int i = 0; i < sol.cnt; i++) {
+      for (int j : sol.scc[i]) {
+
+        if (ans[g(j)] != -1) continue;
+        ans[g(j)] = (j <= n);
+
+      }
+    }
+
+    return 1;
+
+  }
+
+};
+]]></content>
+  <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+  <tabTrigger>2sat</tabTrigger>
+  <!-- Optional: Set a scope to limit where the snippet will trigger -->
+  <!-- <scope>source.python</scope> -->
+</snippet>
