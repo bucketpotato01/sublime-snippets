@@ -1,0 +1,86 @@
+<snippet>
+  <content><![CDATA[
+// tested on https://judge.yosupo.jp/problem/scc
+struct SCC
+{
+  
+  int n, one_indexed;
+  vector<vector<int>> g;
+  vector<int> which;
+  vector<vector<int>> scc;
+
+  int ind, cnt;
+  vector<int> vis, lo, onstack;
+
+  SCC(int _n, int one = 1): n(_n), one_indexed(one) {
+
+    g = vector<vector<int>>(n + one_indexed);
+
+  }
+
+  void add(int x, int y) {
+
+    g[x].push_back(y);
+
+  }
+
+  void dfs(int c, stack<int> &s) {
+
+    vis[c] = ind++;
+    lo[c] = vis[c];
+    onstack[c] = 1;
+    s.push(c);
+
+    for (int i : g[c]) {
+
+      if (vis[i] == -1) {
+        dfs(i, s);
+        lo[c] = min(lo[c], lo[i]);
+      }
+      else {
+        if (onstack[i]) {
+          lo[c] = min(lo[c], vis[i]);
+        }
+      }
+
+    }
+
+    if (vis[c] == lo[c]) {
+      while (s.size()) {
+        int x = s.top();
+        s.pop();
+        scc[cnt].push_back(x);
+        onstack[x] = 0;
+        if (x == c) break;
+      }
+      cnt++;
+    }
+
+  }
+
+  void find() {
+
+    which = vector<int>(n + one_indexed, -1);
+    scc = vector<vector<int>>(n + one_indexed);
+    vis = vector<int>(n + one_indexed, -1);
+    lo = vector<int>(n + one_indexed, 0);
+    onstack = vector<int>(n + one_indexed, 0);
+    ind = cnt = 0;
+
+    stack<int> curr;
+    for (int i = one_indexed; i < n + one_indexed; i++) {
+
+      if (vis[i] != -1) continue;
+      dfs(i, curr);
+
+    }
+
+  }
+
+};
+]]></content>
+  <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+  <tabTrigger>scc</tabTrigger>
+  <!-- Optional: Set a scope to limit where the snippet will trigger -->
+  <!-- <scope>source.python</scope> -->
+</snippet>
