@@ -1,0 +1,126 @@
+<snippet>
+  <content><![CDATA[
+struct Dinic
+{
+
+  const ll DINF = 1e18;
+
+  int n, source, sink;
+  vector<ll> dist;
+  vector<vector<int>> g;
+  vector<int> o;
+  vector<pair<int,ll>> e;
+
+  Dinic(int _n, int S = -1, int T = -1) {
+
+    if (S == -1) S = 0;
+    if (T == -1) T = n - 1;
+
+    n = _n;
+    source = S;
+    sink = T;
+    dist = vector<ll>(n, DINF);
+    g = vector<vector<int>>(n);
+
+  }
+
+  int bfs() {
+
+    for (int i = 0; i < n; i++)
+      dist[i] = DINF;
+
+    queue<ll> curr;
+    curr.push(source);
+    dist[source] = 0;
+
+    while (curr.size()) {
+
+      int c = curr.front();
+      curr.pop();
+
+      for (int i : g[c]) {
+        int ei = e[i].first;
+
+        if (dist[ei] > dist[c] + 1 && e[i].second > 0) {
+          dist[ei] = dist[c] + 1;
+          curr.push(ei);
+        }
+
+      }
+
+    }
+
+    return (dist[sink] < DINF);
+
+  }
+
+  void add(int x, int y, ll cap) {
+
+    int s = e.size();
+
+    o.push_back(s + 1);
+    o.push_back(s);
+
+    g[x].push_back(s++);
+    g[y].push_back(s++);
+
+    e.push_back({y, cap});
+    e.push_back({x, 0});
+
+  }
+
+  void add_flow(int ei, ll v) {
+
+    e[  ei ].second -= v;
+    e[o[ei]].second += v;
+
+  }
+
+  ll send_flow(int c, ll cap) {
+
+    if (c == sink || cap == 0) return cap;
+
+    ll tot = 0, rem = cap;
+
+    for (int i : g[c]) {
+
+      int ni = e[i].first;
+      if (dist[ni] != dist[c] + 1)
+        continue;
+
+      ll ts = min(rem, e[i].second);
+      ll sent = send_flow(ni, ts);
+      add_flow(i, sent);
+
+      tot += sent;
+      rem -= sent;
+
+      if (!rem) break;
+
+    }
+
+    if (tot == 0) dist[c] = DINF;
+
+    return tot;
+
+  }
+
+  ll solve() {
+
+    ll ans = 0;
+    while (bfs()) {
+      ll fs = send_flow(source, DINF);
+      ans += fs;
+    }
+
+    return ans;
+
+  }
+  
+};
+]]></content>
+  <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+  <tabTrigger>dinic</tabTrigger>
+  <!-- Optional: Set a scope to limit where the snippet will trigger -->
+  <!-- <scope>source.python</scope> -->
+</snippet>
