@@ -1,0 +1,53 @@
+<snippet>
+  <content><![CDATA[
+struct sparse {
+ 
+  int n;
+  // REMEMBER TO CHANGE
+  const static int LOG = 20;
+  vector<vector<int>> a;
+  vector<int> r;
+ 
+  sparse(vector<int> A) {
+ 
+    a = vector<vector<int>>(LOG, vector<int>(A.size()));
+    n = A.size();
+    r = vector<int>(n + 1, 0);
+ 
+    for (int i = 0; i < n; i++)
+      a[0][i] = A[i];
+    for (int i = 1; i < LOG; i++) {
+      for (int j = 0; j < n; j++) {
+        a[i][j] = a[i - 1][j];
+        if (j + (1 << (i - 1)) < n)
+          a[i][j] = min(a[i][j], a[i - 1][j + (1 << (i - 1))]);
+      }
+    }
+ 
+    for (int i = 1; i <= n; i++) {
+      for (int j = 0; j < LOG; j++) {
+        if ((1 << j) <= i) {
+          r[i] = j;
+        }
+      }
+    }
+ 
+  }
+ 
+  int query(int L, int R) {
+ 
+    int t = r[R - L + 1];
+    int lo = L;
+    int hi = R - (1 << t) + 1;
+    return min(a[t][lo], a[t][hi]);
+ 
+  }
+  
+};
+
+]]></content>
+  <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+  <tabTrigger>sparse</tabTrigger>
+  <!-- Optional: Set a scope to limit where the snippet will trigger -->
+  <!-- <scope>source.python</scope> -->
+</snippet>
